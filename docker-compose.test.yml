@@ -1,16 +1,16 @@
 services:
   web:
     build: .
-    command: bash -c "bundle install && RAILS_ENV=production rails db:migrate && rails s -b 0.0.0.0"
+    command: bash -c "bundle install && RAILS_ENV=staging rails db:migrate && rails s -b 0.0.0.0"
     volumes:
       - .:/myapp
     ports:
       - "3000:3000"
     environment:
-      RAILS_ENV: test
       DATABASE_HOST: ${DB_HOST}
       DATABASE_USERNAME: ${DB_USERNAME}
       DATABASE_PASSWORD: ${DB_PASSWORD}
       DATABASE_NAME: ${DB_NAME}
+      RAILS_ENV: staging
     env_file:
       - .env.test
