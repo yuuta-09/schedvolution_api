@@ -1,0 +1,17 @@
+services:
+  web:
+    build: .
+    command: bash -c "bundle install && RAILS_ENV=production rails db:migrate && rails s -b 0.0.0.0"
+    volumes:
+      - .:/myapp
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: production
+      DATABASE_HOST: ${DB_HOST}
+      DATABASE_USERNAME: ${DB_USERNAME}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_NAME: ${DB_NAME}
+    env_file:
+      - .env.prod
+
