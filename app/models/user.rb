@@ -7,5 +7,9 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
   
+  # バリデーション
   validates :name, presence: true, length: { maximum: 50 }
+  
+  # アソシエーション
+  has_many :schedules, dependent: :destroy
 end

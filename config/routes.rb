@@ -6,5 +6,6 @@ Rails.application.routes.draw do
   # API routes
   scope '/api' do
     mount_devise_token_auth_for 'User', at: 'auth'
+    resources :schedules, except: [:new, :edit]
   end
 end
