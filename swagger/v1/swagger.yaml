@@ -1,0 +1,270 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/auth":
+    post:
+      summary: ユーザ登録(Sign Up)
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: 成功
+          headers:
+            access-token:
+              type: string
+              description: Access Token
+            token-type:
+              type: string
+              description: Token Type(Bearer)
+            client:
+              type: string
+              description: Client ID
+            expiry:
+              type: string
+              description: Token Expiry Time
+            uid:
+              type: string
+              description: User ID(email)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        format: email
+                        example: test@example.com
+                      provider:
+                        type: string
+                        example: email
+                      uid:
+                        type: string
+                        example: '1'
+                      id:
+                        type: integer
+                        example: 1
+                      allow_password_change:
+                        type: boolean
+                        example: false
+                      name:
+                        type: string
+                        example: 山田太郎
+                      is_active:
+                        type: boolean
+                        example: true
+                      is_free_user:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2023-06-01T12:00:00Z'
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2023-06-01T12:00:00Z'
+        '422':
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: 'null'
+                      provider:
+                        type: string
+                        example: email
+                      uid:
+                        type: string
+                        example: ''
+                      allow_password_change:
+                        type: boolean
+                        example: false
+                      name:
+                        type: string
+                        example: テストユーザー
+                      email:
+                        type: string
+                        example: testexample.com
+                      is_active:
+                        type: boolean
+                        example: true
+                      is_free_user:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: 'null'
+                      updated_at:
+                        type: 'null'
+                  errors:
+                    type: object
+                    properties:
+                      email:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                        - is not an email
+                      full_messages:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                        - Email is not an email
+                required:
+                - status
+                - data
+                - errors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 山田太郎
+                email:
+                  type: string
+                  format: email
+                  example: test@example.com
+                password:
+                  type: string
+                  example: password123
+                password_confirmation:
+                  type: string
+                  example: password123
+              required:
+              - name
+              - email
+              - password
+  "/api/auth/sign_in":
+    post:
+      summary: ログイン（Sign In）
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: 成功
+          headers:
+            access-token:
+              schema:
+                type: string
+            token-type:
+              schema:
+                type: string
+                example: Bearer
+            client:
+              schema:
+                type: string
+            expiry:
+              schema:
+                type: string
+            uid:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        format: email
+                      name:
+                        type: string
+                        example: Test User
+                      uid:
+                        type: string
+                        example: test@example.com
+                      provider:
+                        type: string
+                        example: email
+                      is_active:
+                        type: boolean
+                      is_free_user:
+                        type: boolean
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                    - Invalid login credentials. Please try again.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: test@example.com
+                password:
+                  type: string
+                  example: password123
+              required:
+              - email
+              - password
+  "/api/auth/sign_out":
+    delete:
+      summary: ユーザーログアウト
+      tags:
+      - Authentication
+      parameters:
+      - name: access-token
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: client
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: uid
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: 成功
+        '404':
+          description: ログインしていない or トークン無効
+servers:
+- url: http://localhost:3000
+  description: Local development server
